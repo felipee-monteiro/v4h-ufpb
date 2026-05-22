@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
-import RoleSelector from '@/components/RoleSelector.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -25,14 +23,15 @@ defineProps<{
     status?: string;
     canResetPassword: boolean;
 }>();
-
-const selectedRole = ref('');
 </script>
 
 <template>
     <Head title="Entrar" />
 
-    <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
+    <div
+        v-if="status"
+        class="mb-4 text-center text-sm font-medium text-green-600"
+    >
         {{ status }}
     </div>
 
@@ -40,10 +39,12 @@ const selectedRole = ref('');
         v-bind="store.form()"
         :reset-on-success="['password']"
         v-slot="{ errors, processing }"
-        class="max-w-md mx-auto bg-white/80 dark:bg-slate-900/80 p-6 rounded-lg shadow-sm text-slate-900 dark:text-slate-100"
+        class="mx-auto max-w-md rounded-lg bg-white/80 p-6 text-slate-900 shadow-sm dark:bg-slate-900/80 dark:text-slate-100"
     >
-        <h1 class="text-2xl font-semibold text-center">Entrar</h1>
-        <p class="text-sm text-center text-muted-foreground mb-4">Acesse sua conta como Solicitante ou Especialista</p>
+        <h1 class="text-center text-2xl font-semibold">Entrar</h1>
+        <p class="mb-4 text-center text-sm text-muted-foreground">
+            Acesse sua conta como Solicitante ou Especialista
+        </p>
 
         <div class="grid gap-4">
             <div class="grid gap-2">
@@ -64,7 +65,13 @@ const selectedRole = ref('');
             <div class="grid gap-2">
                 <div class="flex items-center justify-between">
                     <Label for="password">Senha</Label>
-                    <TextLink v-if="canResetPassword" :href="request()" class="text-sm" :tabindex="5">Esqueceu a senha?</TextLink>
+                    <TextLink
+                        v-if="canResetPassword"
+                        :href="request()"
+                        class="text-sm"
+                        :tabindex="5"
+                        >Esqueceu a senha?</TextLink
+                    >
                 </div>
                 <PasswordInput
                     id="password"
@@ -77,12 +84,6 @@ const selectedRole = ref('');
                 <InputError :message="errors.password" />
             </div>
 
-                <div>
-                    <Label for="role">Entrar como</Label>
-                    <RoleSelector v-model="selectedRole" name="role" />
-                    <p class="text-xs text-muted-foreground mt-2">Se preferir, deixe em branco e o sistema detectará seu perfil automaticamente.</p>
-                </div>
-
             <div class="flex items-center justify-between">
                 <Label for="remember" class="flex items-center space-x-3">
                     <Checkbox id="remember" name="remember" :tabindex="3" />
@@ -92,7 +93,7 @@ const selectedRole = ref('');
 
             <Button
                 type="submit"
-                class="mt-2 w-full flex items-center justify-center gap-2"
+                class="mt-2 flex w-full items-center justify-center gap-2"
                 :tabindex="4"
                 :disabled="processing"
                 data-test="login-button"
@@ -103,7 +104,7 @@ const selectedRole = ref('');
             </Button>
         </div>
 
-        <div class="text-center text-sm text-muted-foreground mt-4">
+        <div class="mt-4 text-center text-sm text-muted-foreground">
             Ainda não tem conta?
             <TextLink :href="register()" :tabindex="5">Cadastre-se</TextLink>
         </div>

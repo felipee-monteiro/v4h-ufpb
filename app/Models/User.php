@@ -18,6 +18,7 @@ final class User extends Authenticatable
      * @use HasFactory<UserFactory>
      */
     use HasFactory;
+
     use Notifiable;
     use HasUuids;
     use HasRoles;
@@ -64,6 +65,11 @@ final class User extends Authenticatable
     public function professionalService()
     {
         return $this->hasOne(Service::class, 'professional_uuid');
+    }
+
+    public function professionalTeleconsultorias()
+    {
+        return $this->hasManyThrough(Teleconsultoria::class, Service::class, 'professional_uuid', 'service_uuid', 'uuid', 'uuid');
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Concerns\UsesCurrentUser;
 use App\Enums\RoleName;
 use App\Models\Service;
 use App\Models\Teleconsultoria;
+use Illuminate\Database\Eloquent\Builder;
 use Inertia\Response;
 
 final class DashboardController extends Controller
@@ -17,7 +18,12 @@ final class DashboardController extends Controller
     public function index(): Response
     {
         $teleconsultorias = Teleconsultoria::with('service.professional')
-            ->whereBelongsTo($this->currentUser, 'solicitante')
+            ->where(function (Builder $query): void {
+                $query->whereBelongsTo($this->currentUser, 'solicitante')
+                    ->orWhereHas('service.professional', function (Builder $query): void {
+                        $query->whereKey($this->currentUser->getKey());
+                    });
+            })
             ->latest()
             ->get()
             ->map(static function (Teleconsultoria $teleconsultoria): array {
@@ -36,12 +42,11 @@ final class DashboardController extends Controller
                 ];
             });
 
-        $specialties = Service::whereHas('professional')->get();
-
         return inertia('Dashboard', [
             'teleconsultorias'         => $teleconsultorias,
-            'specialties'              => $specialties,
+            'specialities'             => Service::whereHas('professional')->get(),
             'canCreateTeleconsultoria' => $this->currentUser->hasRole(RoleName::SOLICITANTE->value),
+            'canCreateParecer'         => $this->currentUser->hasRole(RoleName::ESPECIALISTA->value),
         ]);
     }
 }

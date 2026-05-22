@@ -7,13 +7,11 @@ import NovaTeleconsultoria from '@/components/Dashboard/Modals/NovaTeleconsultor
 import DashboardTable from '@/components/Dashboard/Table.vue';
 
 import dashboard from '@/routes/dashboard';
-import especialistaTeleconsultoriaRoutes from '@/routes/especialista/teleconsultorias';
 
 import type {
     Teleconsultoria,
     TeleconsultoriaDateFilterKey,
     TeleconsultoriaFilters,
-    TeleconsultoriaSpecialty,
     TeleconsultoriaStatus,
 } from '@/types';
 
@@ -31,13 +29,15 @@ defineOptions({
 const props = withDefaults(
     defineProps<{
         teleconsultorias: Teleconsultoria[];
-        specialties: TeleconsultoriaSpecialty[];
+        specialities: [];
         canCreateTeleconsultoria: boolean;
+        canCreateParecer: boolean;
     }>(),
     {
         teleconsultorias: () => [],
-        specialties: () => [],
+        specialities: () => [],
         canCreateTeleconsultoria: false,
+        canCreateParecer: false,
     },
 );
 
@@ -168,12 +168,14 @@ provide('teleconsultorias', filteredTeleconsultorias.value);
 provide('openDetailsModal', openDetailsModal);
 provide('createDialogOpen', createDialogOpen);
 provide('canCreateTeleconsultoria', props.canCreateTeleconsultoria);
+provide('canCreateParecer', props.canCreateParecer);
 provide('selectedTeleconsultoria', selectedTeleconsultoria);
 provide('detailDialogOpen', detailDialogOpen);
 provide('canRegisterOpinion', canRegisterOpinion);
-provide('especialistaTeleconsultoriaRoutes', especialistaTeleconsultoriaRoutes);
 provide('exportSummaryToPdf', exportSummaryToPdf);
 provide('closeDetailsModal', closeDetailsModal);
+
+provide('specialities', props.specialities);
 </script>
 
 <template>

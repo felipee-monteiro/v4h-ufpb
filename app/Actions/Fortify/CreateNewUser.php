@@ -38,7 +38,7 @@ final class CreateNewUser implements CreatesNewUsers
             ],
         ])->validate();
 
-        $user = DB::transaction(static function () use ($input): User {
+        return DB::transaction(static function () use ($input): User {
             $user = User::create([
                 'name'     => $input['name'],
                 'email'    => $input['email'],
@@ -47,13 +47,13 @@ final class CreateNewUser implements CreatesNewUsers
 
             $user->assignRole($input['role'] ?? RoleName::SOLICITANTE->value);
 
-            if ($input['service_category']) {
-                $user->professionalService()->save(Service::whereKey($input['service_category'])->first());
+            $serviceCategory = $input['service_category'] ?? null;
+
+            if ($serviceCategory) {
+                $user->professionalService()->save(Service::whereKey($serviceCategory)->first());
             }
 
             return $user;
         });
-
-        return $user;
     }
 }

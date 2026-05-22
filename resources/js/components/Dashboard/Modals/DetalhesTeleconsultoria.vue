@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
 import { inject } from 'vue';
-import type { Ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -12,24 +11,13 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import type { Teleconsultoria } from '@/types';
 
-const selectedTeleconsultoria = inject<Ref<Teleconsultoria | null>>(
-    'selectedTeleconsultoria',
-) as Ref<Teleconsultoria | null>;
-const detailDialogOpen = inject<Ref<boolean>>(
-    'detailDialogOpen',
-) as Ref<boolean>;
-const canRegisterOpinion = inject<Ref<boolean>>(
-    'canRegisterOpinion',
-) as Ref<boolean>;
-const especialistaTeleconsultoriaRoutes = inject(
-    'especialistaTeleconsultoriaRoutes',
-) as { registerOpinion: (args: { teleconsultoria?: string }) => any };
-const exportSummaryToPdf = inject<() => void>(
-    'exportSummaryToPdf',
-) as () => void;
-const closeDetailsModal = inject<() => void>('closeDetailsModal') as () => void;
+const selectedTeleconsultoria = inject('selectedTeleconsultoria', {});
+const detailDialogOpen = inject('detailDialogOpen');
+
+const exportSummaryToPdf = inject('exportSummaryToPdf');
+const canRegisterOpinion = inject('canCreateParecer', false);
+const closeDetailsModal = inject('closeDetailsModal');
 </script>
 
 <template>
@@ -47,7 +35,7 @@ const closeDetailsModal = inject<() => void>('closeDetailsModal') as () => void;
                         Especialidade
                     </p>
                     <p class="mt-2 text-sm text-muted-foreground">
-                        {{ selectedTeleconsultoria?.specialty ?? '—' }}
+                        {{ selectedTeleconsultoria.specialty }}
                     </p>
                 </div>
 
@@ -58,10 +46,7 @@ const closeDetailsModal = inject<() => void>('closeDetailsModal') as () => void;
                     <p
                         class="mt-2 text-sm leading-6 whitespace-pre-line text-muted-foreground"
                     >
-                        {{
-                            selectedTeleconsultoria?.diagnostic_hypothesis ??
-                            '—'
-                        }}
+                        {{ selectedTeleconsultoria.diagnostic_hypothesis }}
                     </p>
                 </div>
 
@@ -72,7 +57,7 @@ const closeDetailsModal = inject<() => void>('closeDetailsModal') as () => void;
                     <p
                         class="mt-2 text-sm leading-6 whitespace-pre-line text-muted-foreground"
                     >
-                        {{ selectedTeleconsultoria?.clinical_history ?? '—' }}
+                        {{ selectedTeleconsultoria.clinical_history }}
                     </p>
                 </div>
 
@@ -81,7 +66,7 @@ const closeDetailsModal = inject<() => void>('closeDetailsModal') as () => void;
                         Especialista responsável
                     </p>
                     <p class="mt-2 text-sm text-muted-foreground">
-                        {{ selectedTeleconsultoria?.professional ?? '—' }}
+                        {{ selectedTeleconsultoria.professional }}
                     </p>
                 </div>
 
@@ -100,17 +85,7 @@ const closeDetailsModal = inject<() => void>('closeDetailsModal') as () => void;
                     </p>
                 </div>
 
-                <Form
-                    v-if="canRegisterOpinion"
-                    v-bind="
-                        especialistaTeleconsultoriaRoutes
-                            .registerOpinion({
-                                teleconsultoria: selectedTeleconsultoria?.id,
-                            })
-                            .form()
-                    "
-                    class="space-y-4"
-                >
+                <Form v-if="canRegisterOpinion" class="space-y-4">
                     <div class="grid gap-2">
                         <Label for="professional_opinion"
                             >Registrar Parecer</Label
@@ -154,13 +129,13 @@ const closeDetailsModal = inject<() => void>('closeDetailsModal') as () => void;
                 </Button>
 
                 <DialogClose as-child>
-                    <button
+                    <Button
                         type="button"
                         class="h-10 cursor-pointer rounded-md border border-border bg-background px-4 text-sm font-medium text-foreground transition hover:bg-muted"
                         @click="closeDetailsModal"
                     >
                         Fechar
-                    </button>
+                    </Button>
                 </DialogClose>
             </DialogFooter>
         </DialogContent>

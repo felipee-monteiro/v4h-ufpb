@@ -18,7 +18,7 @@ import teleconsultoriaRoutes from '@/routes/solicitante/teleconsultorias';
 
 const canCreateTeleconsultoria = inject('canCreateTeleconsultoria', false);
 const createDialogOpen = inject('createDialogOpen');
-const specialties = inject('specialties', []);
+const specialities = inject('specialities', []);
 </script>
 
 <template>
@@ -89,11 +89,11 @@ const specialties = inject('specialties', []);
                         >
                             <option value="">Selecione</option>
                             <option
-                                v-for="specialty in specialties"
-                                :key="specialty.uuid"
-                                :value="specialty.uuid"
+                                v-for="speciality in specialities"
+                                :key="speciality.uuid"
+                                :value="speciality.uuid"
                             >
-                                {{ specialty.title }}
+                                {{ speciality.title }}
                             </option>
                         </select>
                         <InputError :message="errors.service_uuid" />
