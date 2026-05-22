@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Eye } from 'lucide-vue-next';
 import { inject } from 'vue';
+import { useDetalheTeleconsultoriaModal } from '@/composables/useDetalheTeleconsultoriaModal';
+import type { Teleconsultoria, TeleconsultoriaStatus } from '@/types';
 
 const statusClasses = {
     Pendente:
@@ -25,8 +27,9 @@ function statusClass(status: TeleconsultoriaStatus): string {
     return statusClasses[status];
 }
 
-const teleconsultorias = inject('teleconsultorias', []);
-const openDetailsModal = inject('openDetailsModal');
+const teleconsultorias: Teleconsultoria[] = inject('teleconsultorias', []);
+
+const { openDetailsModal } = useDetalheTeleconsultoriaModal();
 </script>
 
 <template>

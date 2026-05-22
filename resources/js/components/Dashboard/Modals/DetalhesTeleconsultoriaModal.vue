@@ -11,17 +11,16 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { useDetalheTeleconsultoriaModal } from '@/composables/useDetalheTeleconsultoriaModal';
 
-const selectedTeleconsultoria = inject('selectedTeleconsultoria', {});
-const detailDialogOpen = inject('detailDialogOpen');
+const { closeDetailsModal, selectedTeleconsultoria, detailDialogOpen } =
+    useDetalheTeleconsultoriaModal();
 
-const exportSummaryToPdf = inject('exportSummaryToPdf');
-const canRegisterOpinion = inject('canCreateParecer', false);
-const closeDetailsModal = inject('closeDetailsModal');
+const canCreateParecer = inject('canCreateParecer', false);
 </script>
 
 <template>
-    <Dialog v-model:open="detailDialogOpen">
+    <Dialog :open="detailDialogOpen" @close="closeDetailsModal">
         <DialogContent
             class="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-2xl"
         >
@@ -35,7 +34,7 @@ const closeDetailsModal = inject('closeDetailsModal');
                         Especialidade
                     </p>
                     <p class="mt-2 text-sm text-muted-foreground">
-                        {{ selectedTeleconsultoria.specialty }}
+                        {{ selectedTeleconsultoria?.specialty }}
                     </p>
                 </div>
 
@@ -46,7 +45,7 @@ const closeDetailsModal = inject('closeDetailsModal');
                     <p
                         class="mt-2 text-sm leading-6 whitespace-pre-line text-muted-foreground"
                     >
-                        {{ selectedTeleconsultoria.diagnostic_hypothesis }}
+                        {{ selectedTeleconsultoria?.diagnostic_hypothesis }}
                     </p>
                 </div>
 
@@ -57,7 +56,7 @@ const closeDetailsModal = inject('closeDetailsModal');
                     <p
                         class="mt-2 text-sm leading-6 whitespace-pre-line text-muted-foreground"
                     >
-                        {{ selectedTeleconsultoria.clinical_history }}
+                        {{ selectedTeleconsultoria?.clinical_history }}
                     </p>
                 </div>
 
@@ -66,7 +65,7 @@ const closeDetailsModal = inject('closeDetailsModal');
                         Especialista responsável
                     </p>
                     <p class="mt-2 text-sm text-muted-foreground">
-                        {{ selectedTeleconsultoria.professional }}
+                        {{ selectedTeleconsultoria?.professional }}
                     </p>
                 </div>
 
@@ -85,7 +84,7 @@ const closeDetailsModal = inject('closeDetailsModal');
                     </p>
                 </div>
 
-                <Form v-if="canRegisterOpinion" class="space-y-4">
+                <Form v-if="canCreateParecer" class="space-y-4">
                     <div class="grid gap-2">
                         <Label for="professional_opinion"
                             >Registrar Parecer</Label
@@ -101,11 +100,6 @@ const closeDetailsModal = inject('closeDetailsModal');
                         />
                     </div>
 
-                    <p class="text-sm text-muted-foreground">
-                        O botão fica habilitado apenas para o especialista
-                        responsável pela teleconsultoria.
-                    </p>
-
                     <div class="flex items-center justify-between gap-3">
                         <div>
                             <Button type="submit" class="h-10 rounded-md">
@@ -119,12 +113,7 @@ const closeDetailsModal = inject('closeDetailsModal');
             <DialogFooter
                 class="flex flex-wrap items-center justify-between gap-3"
             >
-                <Button
-                    type="button"
-                    variant="secondary"
-                    class="h-10"
-                    @click="exportSummaryToPdf"
-                >
+                <Button type="button" variant="secondary" class="h-10">
                     Exportar resumo em PDF
                 </Button>
 

@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { CalendarDays, Search } from 'lucide-vue-next';
-import { computed, reactive, ref, provide } from 'vue';
-import DetalhesTeleconsultoria from '@/components/Dashboard/Modals/DetalhesTeleconsultoria.vue';
+import { computed, reactive, provide } from 'vue';
+import DetalhesTeleconsultoriaModal from '@/components/Dashboard/Modals/DetalhesTeleconsultoriaModal.vue';
 import NovaTeleconsultoria from '@/components/Dashboard/Modals/NovaTeleconsultoria.vue';
 import DashboardTable from '@/components/Dashboard/Table.vue';
-
 import dashboard from '@/routes/dashboard';
 
 import type {
     Teleconsultoria,
-    TeleconsultoriaDateFilterKey,
     TeleconsultoriaFilters,
     TeleconsultoriaStatus,
 } from '@/types';
@@ -41,38 +39,15 @@ const props = withDefaults(
     },
 );
 
-const createDialogOpen = ref(false);
-const detailDialogOpen = ref(false);
-const selectedTeleconsultoria = ref<Teleconsultoria | null>(null);
-
-const currentUser = computed<{ uuid?: string } | null>(() => {
-    return null;
-});
-
-const canRegisterOpinion = computed(() => {
-    return (
-        currentUser.value?.uuid !== undefined &&
-        selectedTeleconsultoria.value?.professional_uuid !== undefined &&
-        currentUser.value.uuid ===
-            selectedTeleconsultoria.value.professional_uuid
-    );
-});
-
-const statuses: TeleconsultoriaStatus[] = [
-    'Pendente',
-    'Em andamento',
-    'Concluída',
-    'Cancelada',
-];
+const statuses = ['Pendente', 'Em andamento', 'Concluída', 'Cancelada'];
 
 const fieldClass =
     'dark:border-border-dark h-10 w-full rounded-md border border-border bg-background pr-3 pl-9 text-sm text-foreground transition outline-none focus:border-primary focus:ring-2 focus:ring-primary/20';
 
-const dateFields: Array<{ key: TeleconsultoriaDateFilterKey; label: string }> =
-    [
-        { key: 'dateFrom', label: 'Data inicial' },
-        { key: 'dateTo', label: 'Data final' },
-    ];
+const dateFields = [
+    { key: 'dateFrom', label: 'Data inicial' },
+    { key: 'dateTo', label: 'Data final' },
+];
 
 const filters = reactive<TeleconsultoriaFilters>({
     search: '',
@@ -88,9 +63,9 @@ const normalizedSearch = computed(() =>
 const filteredTeleconsultorias = computed(() => {
     return props.teleconsultorias.filter((teleconsultoria) => {
         return (
-            matchesSearch(teleconsultoria) &&
-            matchesStatus(teleconsultoria) &&
-            matchesDateRange(teleconsultoria)
+            matchesSearch(teleconsultoria, normalizedSearch.value) &&
+            matchesStatus(teleconsultoria.status, filters.statuses) &&
+            matchesDateRange(teleconsultoria, filters.dateFrom, filters.dateTo)
         );
     });
 });
@@ -104,32 +79,38 @@ const activeFiltersCount = computed(() => {
     ].filter(Boolean).length;
 });
 
-function matchesSearch(teleconsultoria: Teleconsultoria): boolean {
-    if (normalizedSearch.value.length === 0) {
+function matchesSearch(
+    teleconsultoria: Teleconsultoria,
+    normalizedSearch: string,
+): boolean {
+    if (normalizedSearch.length === 0) {
         return true;
     }
 
     return [teleconsultoria.patient, teleconsultoria.specialty].some((value) =>
-        value.toLocaleLowerCase('pt-BR').includes(normalizedSearch.value),
+        value.toLocaleLowerCase('pt-BR').includes(normalizedSearch),
     );
 }
 
-function matchesStatus(teleconsultoria: Teleconsultoria): boolean {
+function matchesStatus(
+    status: TeleconsultoriaStatus,
+    statuses: TeleconsultoriaStatus[],
+): boolean {
+    return statuses.length === 0 || statuses.includes(status);
+}
+
+function matchesDateRange(
+    teleconsultoria: Teleconsultoria,
+    dateFrom: string,
+    dateTo: string,
+): boolean {
     return (
-        filters.statuses.length === 0 ||
-        filters.statuses.includes(teleconsultoria.status)
+        (dateFrom.length === 0 || teleconsultoria.date >= dateFrom) &&
+        (dateTo.length === 0 || teleconsultoria.date <= dateTo)
     );
 }
 
-function matchesDateRange(teleconsultoria: Teleconsultoria): boolean {
-    return (
-        (filters.dateFrom.length === 0 ||
-            teleconsultoria.date >= filters.dateFrom) &&
-        (filters.dateTo.length === 0 || teleconsultoria.date <= filters.dateTo)
-    );
-}
-
-function toggleStatus(status: TeleconsultoriaStatus): void {
+function toggleStatus(status: any): void {
     if (filters.statuses.includes(status)) {
         filters.statuses = filters.statuses.filter(
             (currentStatus) => currentStatus !== status,
@@ -141,40 +122,16 @@ function toggleStatus(status: TeleconsultoriaStatus): void {
     filters.statuses = [...filters.statuses, status];
 }
 
-function clearFilters(): void {
+function clearFilters(filters: TeleconsultoriaFilters): void {
     filters.search = '';
     filters.statuses = [];
     filters.dateFrom = '';
     filters.dateTo = '';
 }
 
-function exportSummaryToPdf(): void {
-    if (!selectedTeleconsultoria.value) {
-        return;
-    }
-}
-
-function openDetailsModal(teleconsultoria: Teleconsultoria): void {
-    selectedTeleconsultoria.value = teleconsultoria;
-    detailDialogOpen.value = true;
-}
-
-function closeDetailsModal(): void {
-    detailDialogOpen.value = false;
-    selectedTeleconsultoria.value = null;
-}
-
 provide('teleconsultorias', filteredTeleconsultorias.value);
-provide('openDetailsModal', openDetailsModal);
-provide('createDialogOpen', createDialogOpen);
 provide('canCreateTeleconsultoria', props.canCreateTeleconsultoria);
 provide('canCreateParecer', props.canCreateParecer);
-provide('selectedTeleconsultoria', selectedTeleconsultoria);
-provide('detailDialogOpen', detailDialogOpen);
-provide('canRegisterOpinion', canRegisterOpinion);
-provide('exportSummaryToPdf', exportSummaryToPdf);
-provide('closeDetailsModal', closeDetailsModal);
-
 provide('specialities', props.specialities);
 </script>
 
@@ -274,14 +231,14 @@ provide('specialities', props.specialities);
                     type="button"
                     class="h-9 rounded-md border border-border px-3 text-sm font-medium text-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
                     :disabled="activeFiltersCount === 0"
-                    @click="clearFilters"
+                    @click="() => clearFilters(filters)"
                 >
                     Limpar filtros
                 </button>
             </div>
         </section>
 
+        <DetalhesTeleconsultoriaModal />
         <DashboardTable />
-        <DetalhesTeleconsultoria />
     </div>
 </template>
