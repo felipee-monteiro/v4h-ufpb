@@ -30,4 +30,5 @@ export type TeleconsultoriaFilters = {
     statuses: TeleconsultoriaStatus[];
     dateFrom: string;
     dateTo: string;
+    teleconsultorias: Teleconsultoria[];
 };
