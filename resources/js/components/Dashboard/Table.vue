@@ -2,18 +2,7 @@
 import { Eye } from 'lucide-vue-next';
 import { useDetalheTeleconsultoriaModal } from '@/composables/useDetalheTeleconsultoriaModal';
 import { useTeleconsultoriaFilters } from '@/composables/useTeleconsultoriaFilters';
-import type { TeleconsultoriaStatus } from '@/types';
-
-const statusClasses = {
-    Pendente:
-        'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-300',
-    'Em andamento':
-        'border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-900/60 dark:bg-sky-950/40 dark:text-sky-300',
-    Concluída:
-        'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-300',
-    Cancelada:
-        'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300',
-};
+import TeleconsultoriaStatus from './TeleconsultoriaStatus.vue';
 
 function formattedDate(date: string): string {
     return new Intl.DateTimeFormat('pt-BR', {
@@ -21,10 +10,6 @@ function formattedDate(date: string): string {
         month: '2-digit',
         year: 'numeric',
     }).format(new Date(`${date}T00:00:00`));
-}
-
-function statusClass(status: TeleconsultoriaStatus): string {
-    return statusClasses[status];
 }
 
 const { filteredTeleconsultorias: teleconsultorias } =
@@ -111,12 +96,9 @@ const { openDetailsModal } = useDetalheTeleconsultoriaModal();
                             {{ formattedDate(teleconsultoria.date) }}
                         </td>
                         <td class="px-4 py-4 whitespace-nowrap">
-                            <span
-                                class="inline-flex rounded-full border px-2.5 py-1 text-xs font-medium"
-                                :class="statusClass(teleconsultoria.status)"
-                            >
-                                {{ teleconsultoria.status }}
-                            </span>
+                            <TeleconsultoriaStatus
+                                :teleconsultoria="teleconsultoria"
+                            />
                         </td>
                         <td class="px-4 py-4 text-right whitespace-nowrap">
                             <button
