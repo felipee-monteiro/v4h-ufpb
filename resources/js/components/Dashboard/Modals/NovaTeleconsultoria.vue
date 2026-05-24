@@ -25,7 +25,10 @@ const { hasPermission } = usePermission();
 </script>
 
 <template>
-    <Dialog v-if="hasPermission(CanCreateTeleconsultoriaKey)">
+    <Dialog
+        v-if="hasPermission(CanCreateTeleconsultoriaKey)"
+        v-model:open="isCreateTeleconsultoriaModalOpen"
+    >
         <DialogTrigger as-child>
             <Button class="h-10 cursor-pointer gap-2">
                 <Plus class="size-4" />

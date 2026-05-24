@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\RoleName;
+use App\Enums\TeleconsultoriaStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
@@ -42,7 +43,7 @@ final class Teleconsultoria extends Model
         parent::boot();
 
         self::creating(static function (Teleconsultoria $teleconsultoria): void {
-            $teleconsultoria->status = 'Pendente';
+            $teleconsultoria->status = TeleconsultoriaStatus::PENDENTE->value;
         });
     }
 
@@ -55,6 +56,7 @@ final class Teleconsultoria extends Model
     {
         return [
             'patient_birthday' => 'date',
+            'status'           => TeleconsultoriaStatus::class,
         ];
     }
 }
