@@ -6,6 +6,7 @@ import DetalhesTeleconsultoriaModal from '@/components/Dashboard/Modals/Detalhes
 import NovaTeleconsultoria from '@/components/Dashboard/Modals/NovaTeleconsultoria.vue';
 import DashboardTable from '@/components/Dashboard/Table.vue';
 import { useTeleconsultoriaFilters } from '@/composables/useTeleconsultoriaFilters';
+import { SpecialitiesProvideKey } from '@/Keys';
 import dashboard from '@/routes/dashboard';
 
 import type { Teleconsultoria } from '@/types';
@@ -25,14 +26,10 @@ const props = withDefaults(
     defineProps<{
         teleconsultorias: Teleconsultoria[];
         specialities: [];
-        canCreateTeleconsultoria: boolean;
-        canCreateParecer: boolean;
     }>(),
     {
         teleconsultorias: () => [],
         specialities: () => [],
-        canCreateTeleconsultoria: false,
-        canCreateParecer: false,
     },
 );
 
@@ -42,7 +39,7 @@ onMounted(() => {
     setTeleconsultorias(props.teleconsultorias);
 });
 
-provide('specialities', props.specialities);
+provide(SpecialitiesProvideKey, props.specialities);
 </script>
 
 <template>

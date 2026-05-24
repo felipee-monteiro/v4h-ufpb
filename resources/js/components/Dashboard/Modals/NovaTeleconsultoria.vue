@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
 import { Plus } from 'lucide-vue-next';
-import { inject } from 'vue';
+import { inject, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import Button from '@/components/ui/button/Button.vue';
 import {
@@ -15,20 +15,17 @@ import {
 } from '@/components/ui/dialog';
 import Label from '@/components/ui/label/Label.vue';
 import { usePermission } from '@/composables/usePermission';
-import { CanCreateTeleconsultoriaKey } from '@/Keys';
+import { CanCreateTeleconsultoriaKey, SpecialitiesProvideKey } from '@/Keys';
 import teleconsultoriaRoutes from '@/routes/solicitante/teleconsultorias';
 
-const createDialogOpen = inject('createDialogOpen');
-const specialities = inject('specialities', []);
+const isCreateTeleconsultoriaModalOpen = ref(false);
+const specialities = inject(SpecialitiesProvideKey, []);
 
 const { hasPermission } = usePermission();
 </script>
 
 <template>
-    <Dialog
-        v-if="hasPermission(CanCreateTeleconsultoriaKey)"
-        v-model:open="createDialogOpen"
-    >
+    <Dialog v-if="hasPermission(CanCreateTeleconsultoriaKey)">
         <DialogTrigger as-child>
             <Button class="h-10 cursor-pointer gap-2">
                 <Plus class="size-4" />
@@ -43,7 +40,7 @@ const { hasPermission } = usePermission();
                 reset-on-success
                 :options="{ preserveScroll: true }"
                 class="space-y-5"
-                @success="createDialogOpen = false"
+                @success="isCreateTeleconsultoriaModalOpen = false"
                 v-slot="{ errors, processing, reset, clearErrors }"
             >
                 <DialogHeader>
