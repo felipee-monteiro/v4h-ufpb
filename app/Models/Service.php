@@ -8,25 +8,22 @@ use App\Enums\RoleName;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Service extends Model
 {
     use HasUuids;
-
-    protected $fillable = ['title', 'professional_uuid'];
-
+    public $incrementing  = false;
+    protected $fillable   = ['title', 'professional_uuid'];
     protected $primaryKey = 'uuid';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
+    protected $keyType    = 'string';
 
     public function professional(): BelongsTo
     {
         return $this->belongsTo(User::class, 'professional_uuid')->role(RoleName::ESPECIALISTA->value);
     }
 
-    public function teleconsultorias()
+    public function teleconsultorias(): HasMany
     {
         return $this->hasMany(Teleconsultoria::class);
     }

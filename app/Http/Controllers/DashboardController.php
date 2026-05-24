@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Concerns\UsesCurrentUser;
-use App\Enums\RoleName;
 use App\Models\Service;
 use App\Models\Teleconsultoria;
 use Illuminate\Database\Eloquent\Builder;
@@ -43,10 +42,8 @@ final class DashboardController extends Controller
             });
 
         return inertia('Dashboard', [
-            'teleconsultorias'         => $teleconsultorias,
-            'specialities'             => Service::whereHas('professional')->get(),
-            'canCreateTeleconsultoria' => $this->currentUser->hasRole(RoleName::SOLICITANTE->value),
-            'canCreateParecer'         => $this->currentUser->hasRole(RoleName::ESPECIALISTA->value),
+            'teleconsultorias' => $teleconsultorias,
+            'specialities'     => Service::whereHas('professional')->get(),
         ]);
     }
 }

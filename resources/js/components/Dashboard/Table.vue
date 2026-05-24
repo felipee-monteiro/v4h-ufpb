@@ -2,20 +2,14 @@
 import { Eye } from 'lucide-vue-next';
 import { useDetalheTeleconsultoriaModal } from '@/composables/useDetalheTeleconsultoriaModal';
 import { useTeleconsultoriaFilters } from '@/composables/useTeleconsultoriaFilters';
+import { formattedDate } from '@/utils/date';
 import TeleconsultoriaStatus from './TeleconsultoriaStatus.vue';
-
-function formattedDate(date: string): string {
-    return new Intl.DateTimeFormat('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-    }).format(new Date(`${date}T00:00:00`));
-}
 
 const { filteredTeleconsultorias: teleconsultorias } =
     useTeleconsultoriaFilters();
 
-const { openDetailsModal } = useDetalheTeleconsultoriaModal();
+const { openDetalhesTeleconsultoriaModal: openDetailsModal } =
+    useDetalheTeleconsultoriaModal();
 </script>
 
 <template>

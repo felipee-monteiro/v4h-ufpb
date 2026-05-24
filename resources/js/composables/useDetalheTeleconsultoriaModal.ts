@@ -10,7 +10,7 @@ const state = reactive<{
 });
 
 export function useDetalheTeleconsultoriaModal() {
-    function openDetailsModal(teleconsultoria: Teleconsultoria) {
+    function openDetalhesTeleconsultoriaModal(teleconsultoria: Teleconsultoria) {
         state.detailDialogOpen = true;
         state.selectedTeleconsultoria = teleconsultoria;
     }
@@ -22,7 +22,7 @@ export function useDetalheTeleconsultoriaModal() {
 
     return {
         ...toRefs(state),
-        openDetailsModal,
+        openDetalhesTeleconsultoriaModal,
         closeDetailsModal
     };
 }

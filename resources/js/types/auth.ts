@@ -14,6 +14,7 @@ export type User = {
 
 export type Auth = {
     user: User;
+    permissions: Record<string, boolean>
 };
 
 export type RoleLike = string | { name?: string; label?: string; key?: string };

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
-import { inject } from 'vue';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -12,11 +11,13 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { useDetalheTeleconsultoriaModal } from '@/composables/useDetalheTeleconsultoriaModal';
+import { usePermission } from '@/composables/usePermission';
+import { CanCreateParecerKey } from '@/Keys';
 
 const { closeDetailsModal, selectedTeleconsultoria, detailDialogOpen } =
     useDetalheTeleconsultoriaModal();
 
-const canCreateParecer = inject('canCreateParecer', false);
+const { hasPermission } = usePermission();
 </script>
 
 <template>
@@ -84,7 +85,10 @@ const canCreateParecer = inject('canCreateParecer', false);
                     </p>
                 </div>
 
-                <Form v-if="canCreateParecer" class="space-y-4">
+                <Form
+                    v-if="hasPermission(CanCreateParecerKey)"
+                    class="space-y-4"
+                >
                     <div class="grid gap-2">
                         <Label for="professional_opinion"
                             >Registrar Parecer</Label
@@ -113,10 +117,6 @@ const canCreateParecer = inject('canCreateParecer', false);
             <DialogFooter
                 class="flex flex-wrap items-center justify-between gap-3"
             >
-                <Button type="button" variant="secondary" class="h-10">
-                    Exportar resumo em PDF
-                </Button>
-
                 <DialogClose as-child>
                     <Button
                         type="button"

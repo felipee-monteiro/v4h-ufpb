@@ -14,15 +14,21 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import Label from '@/components/ui/label/Label.vue';
+import { usePermission } from '@/composables/usePermission';
+import { CanCreateTeleconsultoriaKey } from '@/Keys';
 import teleconsultoriaRoutes from '@/routes/solicitante/teleconsultorias';
 
-const canCreateTeleconsultoria = inject('canCreateTeleconsultoria', false);
 const createDialogOpen = inject('createDialogOpen');
 const specialities = inject('specialities', []);
+
+const { hasPermission } = usePermission();
 </script>
 
 <template>
-    <Dialog v-if="canCreateTeleconsultoria" v-model:open="createDialogOpen">
+    <Dialog
+        v-if="hasPermission(CanCreateTeleconsultoriaKey)"
+        v-model:open="createDialogOpen"
+    >
         <DialogTrigger as-child>
             <Button class="h-10 cursor-pointer gap-2">
                 <Plus class="size-4" />

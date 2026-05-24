@@ -29,6 +29,37 @@ const activeFiltersCount = computed(() => {
     ].filter(Boolean).length;
 });
 
+function matchesSearch(
+    teleconsultoria: Teleconsultoria,
+    normalizedSearch: string,
+): boolean {
+    if (normalizedSearch.length === 0) {
+        return true;
+    }
+
+    return [teleconsultoria.patient, teleconsultoria.specialty].some((value) =>
+        value.toLocaleLowerCase('pt-BR').includes(normalizedSearch),
+    );
+}
+
+function matchesStatus(
+    status: TeleconsultoriaStatus,
+    statuses: TeleconsultoriaStatus[],
+): boolean {
+    return statuses.length === 0 || statuses.includes(status);
+}
+
+function matchesDateRange(
+    teleconsultoria: Teleconsultoria,
+    dateFrom: string,
+    dateTo: string,
+): boolean {
+    return (
+        (dateFrom.length === 0 || teleconsultoria.date >= dateFrom) &&
+        (dateTo.length === 0 || teleconsultoria.date <= dateTo)
+    );
+}
+
 export function useTeleconsultoriaFilters() {
 
     const filteredTeleconsultorias = computed(() => {
@@ -43,37 +74,6 @@ export function useTeleconsultoriaFilters() {
 
     function setTeleconsultorias(teleconsultorias: Teleconsultoria[]) {
         state.teleconsultorias = teleconsultorias;
-    }
-
-    function matchesSearch(
-        teleconsultoria: Teleconsultoria,
-        normalizedSearch: string,
-    ): boolean {
-        if (normalizedSearch.length === 0) {
-            return true;
-        }
-
-        return [teleconsultoria.patient, teleconsultoria.specialty].some((value) =>
-            value.toLocaleLowerCase('pt-BR').includes(normalizedSearch),
-        );
-    }
-
-    function matchesStatus(
-        status: TeleconsultoriaStatus,
-        statuses: TeleconsultoriaStatus[],
-    ): boolean {
-        return statuses.length === 0 || statuses.includes(status);
-    }
-
-    function matchesDateRange(
-        teleconsultoria: Teleconsultoria,
-        dateFrom: string,
-        dateTo: string,
-    ): boolean {
-        return (
-            (dateFrom.length === 0 || teleconsultoria.date >= dateFrom) &&
-            (dateTo.length === 0 || teleconsultoria.date <= dateTo)
-        );
     }
 
     function toggleStatus(status: TeleconsultoriaStatus): void {

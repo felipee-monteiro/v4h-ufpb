@@ -42,9 +42,6 @@ onMounted(() => {
     setTeleconsultorias(props.teleconsultorias);
 });
 
-provide('canCreateTeleconsultoria', props.canCreateTeleconsultoria);
-provide('canCreateParecer', props.canCreateParecer);
-
 provide('specialities', props.specialities);
 </script>
 

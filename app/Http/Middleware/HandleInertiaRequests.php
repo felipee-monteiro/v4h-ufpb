@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Enums\RoleName;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -43,7 +44,11 @@ final class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user' => $user,
+                'user'        => $user,
+                'permissions' => [
+                    'canCreateTeleconsultoria' => $user->hasRole(RoleName::SOLICITANTE->value),
+                    'canCreateParecer'         => $user->hasRole(RoleName::ESPECIALISTA->value),
+                ],
             ],
             'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
