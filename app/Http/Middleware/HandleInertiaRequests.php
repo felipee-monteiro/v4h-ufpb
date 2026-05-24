@@ -46,8 +46,8 @@ final class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user'        => $user,
                 'permissions' => [
-                    'canCreateTeleconsultoria' => $user->hasRole(RoleName::SOLICITANTE->value),
-                    'canCreateParecer'         => $user->hasRole(RoleName::ESPECIALISTA->value),
+                    'canCreateTeleconsultoria' => $user?->hasRole(RoleName::SOLICITANTE->value) ?? false,
+                    'canCreateParecer'         => $user?->hasRole(RoleName::ESPECIALISTA->value) ?? false,
                 ],
             ],
             'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
