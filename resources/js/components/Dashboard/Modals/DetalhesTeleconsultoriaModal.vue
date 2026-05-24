@@ -86,7 +86,10 @@ const { hasPermission } = usePermission();
                 </div>
 
                 <Form
-                    v-if="hasPermission(CanCreateParecerKey)"
+                    v-if="
+                        hasPermission(CanCreateParecerKey) &&
+                        selectedTeleconsultoria
+                    "
                     class="space-y-4"
                 >
                     <div class="grid gap-2">

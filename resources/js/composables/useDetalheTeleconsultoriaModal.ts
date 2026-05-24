@@ -16,8 +16,8 @@ export function useDetalheTeleconsultoriaModal() {
     }
 
     function closeDetailsModal() {
-        state.detailDialogOpen = false;
         state.selectedTeleconsultoria = null;
+        state.detailDialogOpen = false;
     }
 
     return {
