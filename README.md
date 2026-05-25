@@ -44,6 +44,8 @@ Nesse ponto, o baixo acoplamento do sistema fez diferença: como o código foi p
 
 Isso tornou o ciclo de revisão, teste e refatoração muito mais eficiente.
 
+O copilot se destacou na geração de testes automatizados, com contextos via MCP e RAG.
+
 ---
 
 ## Limitações e Próximos Passos para Produção
