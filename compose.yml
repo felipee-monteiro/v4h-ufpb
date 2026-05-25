@@ -3,7 +3,9 @@ services:
     build:
         context: .
         args:
-           PHP_VERSION: ${PHP_VERSION:-8.5}
+          USER_ID: ${UID:-1000}
+          GROUP_ID: ${GID:-1000}
+          PHP_VERSION: ${PHP_VERSION:-8.5}
     container_name: v4h-felipe-monteiro-php
     ports:
       - 3030:8080
