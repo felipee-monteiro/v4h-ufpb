@@ -8,6 +8,7 @@ namespace App\Providers;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -54,6 +55,9 @@ final class AppServiceProvider extends ServiceProvider
 
     protected function configureDependencyInjection(): void
     {
-
+        Event::listen(
+            \App\Events\TeleconsultoriaOpinionRegistered::class,
+            \App\Listeners\SendTeleconsultoriaOpinionSseNotification::class,
+        );
     }
 }

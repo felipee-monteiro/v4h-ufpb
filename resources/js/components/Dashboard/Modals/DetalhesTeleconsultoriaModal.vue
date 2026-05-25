@@ -10,12 +10,18 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import InputError from '@/components/InputError.vue';
 import { useDetalheTeleconsultoriaModal } from '@/composables/useDetalheTeleconsultoriaModal';
 import { usePermission } from '@/composables/usePermission';
+import especialistaTeleconsultoriaRoutes from '@/routes/especialista/teleconsultorias';
 import { CanCreateParecerKey } from '@/Keys';
 
-const { closeDetailsModal, selectedTeleconsultoria, detailDialogOpen } =
-    useDetalheTeleconsultoriaModal();
+const {
+    closeDetailsModal,
+    selectedTeleconsultoria,
+    detailDialogOpen,
+    professionalOpinion,
+} = useDetalheTeleconsultoriaModal();
 
 const { hasPermission } = usePermission();
 </script>
@@ -90,7 +96,16 @@ const { hasPermission } = usePermission();
                         hasPermission(CanCreateParecerKey) &&
                         selectedTeleconsultoria
                     "
+                    v-bind="
+                        especialistaTeleconsultoriaRoutes.registerOpinion.form(
+                            selectedTeleconsultoria.id,
+                        )
+                    "
+                    reset-on-success
+                    :options="{ preserveScroll: true }"
+                    @success="() => closeDetailsModal()"
                     class="space-y-4"
+                    v-slot="{ errors, processing, reset, clearErrors }"
                 >
                     <div class="grid gap-2">
                         <Label for="professional_opinion"
@@ -99,17 +114,20 @@ const { hasPermission } = usePermission();
                         <textarea
                             id="professional_opinion"
                             name="professional_opinion"
-                            v-model="
-                                selectedTeleconsultoria!.professional_opinion
-                            "
+                            v-model="professionalOpinion"
                             rows="4"
                             class="dark:border-border-dark min-h-28 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground transition outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
                         />
+                        <InputError :message="errors.professional_opinion" />
                     </div>
 
                     <div class="flex items-center justify-between gap-3">
                         <div>
-                            <Button type="submit" class="h-10 rounded-md">
+                            <Button
+                                type="submit"
+                                :disabled="processing"
+                                class="h-10 rounded-md"
+                            >
                                 Registrar Parecer
                             </Button>
                         </div>

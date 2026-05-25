@@ -4,13 +4,20 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Models\Teleconsultoria;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class StoreTeleconsultoriaOpinionRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $teleconsultoria = $this->route('teleconsultoria');
+        $user            = $this->user();
+
+        return $teleconsultoria instanceof Teleconsultoria
+            && $user instanceof User
+            && $teleconsultoria->canBeReviewedBy($user);
     }
 
     /**

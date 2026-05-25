@@ -37,6 +37,21 @@ final class Teleconsultoria extends Model
         return $this->belongsTo(Service::class);
     }
 
+    public function canBeReviewedBy(User $user): bool
+    {
+        if (!$user->hasRole(RoleName::ESPECIALISTA->value)) {
+            return false;
+        }
+
+        return $user->getKey() === $this->service?->professional_uuid;
+    }
+
+    public function registerProfessionalOpinion(string $professionalOpinion): void
+    {
+        $this->professional_opinion = $professionalOpinion;
+        $this->save();
+    }
+
     #[\Override()]
     protected static function boot(): void
     {

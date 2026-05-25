@@ -4,29 +4,15 @@ declare(strict_types=1);
 
 use App\Enums\RoleName;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SseController;
 use App\Http\Controllers\TeleconsultoriaController;
-use App\Http\Controllers\UsersController;
-use App\Models\User;
-use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->as('dashboard.')->group(static function (): void {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
-
-    Route::group(['as' => 'users.', 'prefix' => 'users'], static function (): void {
-        Route::get('/', [UsersController::class, 'index'])->name('index');
-    });
 });
 
-// Route::get('/', static function(
-//     #[CurrentUser()] User $currentUser
-// ) {
-
-//     $currentUser->assignRole(RoleName::ESPECIALISTA->value);
-
-//     dd($currentUser->roles()->pluck('name'));
-// });
-
+Route::redirect('/', '/dashboard')->name('home');
 require __DIR__ . '/settings.php';
 
 Route::middleware(['auth', 'role:' . RoleName::SOLICITANTE->value])->prefix('solicitante')->name('solicitante.')->group(static function (): void {
@@ -39,3 +25,6 @@ Route::middleware(['auth', 'role:' . RoleName::ESPECIALISTA->value])->prefix('es
     Route::post('teleconsultorias/{teleconsultoria}/parecer', [TeleconsultoriaController::class, 'registerOpinion'])
         ->name('teleconsultorias.registerOpinion');
 });
+
+Route::middleware('auth')->get('sse/teleconsultorias/stream', [SseController::class, 'stream'])
+    ->name('sse.teleconsultorias.stream');

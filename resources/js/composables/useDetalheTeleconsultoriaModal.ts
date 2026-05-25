@@ -4,9 +4,11 @@ import type { Teleconsultoria } from '@/types';
 const state = reactive<{
     selectedTeleconsultoria: Teleconsultoria | null;
     detailDialogOpen: boolean;
+    professionalOpinion: string;
 }>({
     selectedTeleconsultoria: null,
-    detailDialogOpen: false
+    detailDialogOpen: false,
+    professionalOpinion: '',
 });
 
 export function useDetalheTeleconsultoriaModal() {

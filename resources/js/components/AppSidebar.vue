@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { LayoutGrid, Users } from 'lucide-vue-next';
+import { LayoutGrid } from 'lucide-vue-next';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -23,16 +23,9 @@ const mainNavItems: NavItem[] = [
         href: dashboard.index(),
         icon: LayoutGrid,
     },
-    {
-        title: 'Users',
-        href: dashboard.users.index(),
-        icon: Users,
-    },
 ];
 
-const footerNavItems: NavItem[] = [
-
-];
+const footerNavItems: NavItem[] = [];
 </script>
 
 <template>

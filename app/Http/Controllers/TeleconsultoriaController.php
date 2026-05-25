@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Teleconsultoria\RegisterOpinion;
 use App\Concerns\UsesCurrentUser;
-use App\Enums\RoleName;
 use App\Http\Requests\IndexTeleconsultoriaRequest;
 use App\Http\Requests\StoreTeleconsultoriaOpinionRequest;
 use App\Http\Requests\StoreTeleconsultoriaRequest;
@@ -46,7 +46,6 @@ final class TeleconsultoriaController extends Controller
                 'date_to'   => $request->input('date_to') ?: null,
             ],
             'teleconsultorias' => $teleconsultorias,
-            'canCreate'        => $user->hasRole(RoleName::SOLICITANTE->value),
         ]);
     }
 
@@ -67,15 +66,11 @@ final class TeleconsultoriaController extends Controller
     }
 
     public function registerOpinion(
-        Teleconsultoria $teleconsultoria,
         StoreTeleconsultoriaOpinionRequest $request,
+        Teleconsultoria $teleconsultoria,
+        RegisterOpinion $action,
     ): RedirectResponse {
-        $teleconsultoria->load('service.professional');
-
-        DB::transaction(static function () use ($teleconsultoria, $request): void {
-            $teleconsultoria->professional_opinion = $request->professionalOpinion();
-            $teleconsultoria->save();
-        });
+        $action($teleconsultoria, $request->professionalOpinion());
 
         return back();
     }
