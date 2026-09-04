@@ -5,45 +5,36 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\Teleconsultoria\RegisterOpinion;
-use App\Concerns\UsesCurrentUser;
 use App\Http\Requests\IndexTeleconsultoriaRequest;
 use App\Http\Requests\StoreTeleconsultoriaOpinionRequest;
 use App\Http\Requests\StoreTeleconsultoriaRequest;
 use App\Models\Teleconsultoria;
+use App\Models\User;
+use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
 use Inertia\Response;
 
 final class TeleconsultoriaController extends Controller
 {
-    use UsesCurrentUser;
+    public function index(
+        IndexTeleconsultoriaRequest $request,
+        #[CurrentUser] User $user
+    ): Response {
+        $teleconsultorias = Teleconsultoria::query()->getTeleconsultoriasBySolicitante($user)->paginate(10)->withQueryString();
 
-    /**
-     * Show teleconsultorias with filters and list.
-     */
-    public function index(IndexTeleconsultoriaRequest $request): Response
-    {
-        $user = $this->currentUser;
+        $teleconsultorias->getCollection()->transform(fn (Teleconsultoria $teleconsultoria): array => [
+            'id'      => $teleconsultoria->getKey(),
+            'patient' => $user->name,
+            'service' => $teleconsultoria->service?->title,
+            'date'    => $teleconsultoria->created_at->format(),
+            'status'  => $teleconsultoria->status,
+        ]);
 
-        $query = Teleconsultoria::whereBelongsTo($user, 'solicitante');
-
-        $teleconsultorias = $query->orderByDesc(Teleconsultoria::CREATED_AT)->paginate(10)->withQueryString();
-
-        $teleconsultorias->getCollection()->transform(static function (Teleconsultoria $teleconsultoria) use ($user) {
-            return [
-                'id'      => $teleconsultoria->uuid,
-                'patient' => $user->name,
-                'service' => $teleconsultoria->service?->title,
-                'date'    => $teleconsultoria->created_at->format('Y-m-d'),
-                'status'  => $teleconsultoria->status,
-            ];
-        });
-
-        return Inertia::render('Solicitante/Teleconsultorias/Index', [
+        return inertia('Solicitante/Teleconsultorias/Index', [
             'filters' => [
-                'date_from' => $request->input('date_from') ?: null,
-                'date_to'   => $request->input('date_to') ?: null,
+                'date_from' => $request->from(),
+                'date_to'   => $request->to(),
             ],
             'teleconsultorias' => $teleconsultorias,
         ]);
@@ -53,7 +44,7 @@ final class TeleconsultoriaController extends Controller
     {
         $teleconsultoria->load('service.professional', 'solicitante');
 
-        return Inertia::render('Solicitante/Show', [
+        return inertia('Solicitante/Show', [
             'teleconsultoria' => [
                 'id'           => $teleconsultoria->uuid,
                 'patient'      => $teleconsultoria->solicitante->name,
@@ -70,19 +61,19 @@ final class TeleconsultoriaController extends Controller
         Teleconsultoria $teleconsultoria,
         RegisterOpinion $action,
     ): RedirectResponse {
-        $action($teleconsultoria, $request->professionalOpinion());
+        $action->execute($teleconsultoria, $request->professionalOpinion());
 
         return back();
     }
 
-    public function store(StoreTeleconsultoriaRequest $request): RedirectResponse
-    {
-        DB::transaction(function () use ($request): void {
-            Teleconsultoria::create([
-                ...$request->validated(),
-                'solicitante_uuid' => $this->currentUser->getKey(),
-            ]);
-        });
+    public function store(
+        StoreTeleconsultoriaRequest $request,
+        #[CurrentUser] User $user
+    ): RedirectResponse {
+        DB::transaction(fn () => Teleconsultoria::create([
+            ...$request->validated(),
+            'solicitante_uuid' => $user->getKey(),
+        ]));
 
         return to_route('dashboard.index');
     }

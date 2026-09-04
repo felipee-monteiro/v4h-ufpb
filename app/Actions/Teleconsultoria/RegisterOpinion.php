@@ -8,17 +8,17 @@ use App\Events\TeleconsultoriaOpinionRegistered;
 use App\Models\Teleconsultoria;
 use Illuminate\Support\Facades\DB;
 
-final class RegisterOpinion
+final readonly class RegisterOpinion
 {
-    public function __invoke(Teleconsultoria $teleconsultoria, string $professionalOpinion): Teleconsultoria
+    public function execute(Teleconsultoria $teleconsultoria, string $professionalOpinion): Teleconsultoria
     {
-        DB::transaction(static function () use ($teleconsultoria, $professionalOpinion): void {
-            $teleconsultoria->registerProfessionalOpinion($professionalOpinion);
-
-            DB::afterCommit(static function () use ($teleconsultoria): void {
-                event(new TeleconsultoriaOpinionRegistered($teleconsultoria->refresh()->load('service.professional')));
-            });
+        DB::transaction(function () use ($teleconsultoria, $professionalOpinion): void {
+            $teleconsultoria->update([
+                'professional_opinion' => $professionalOpinion
+            ]);
         });
+
+        DB::afterCommit(fn () => event(new TeleconsultoriaOpinionRegistered($teleconsultoria)));
 
         return $teleconsultoria;
     }

@@ -20,8 +20,6 @@ return new class extends Migration
 
             $table->string('patient_name');
 
-            $table->string('patient_initials', 8);
-
             $table->date('patient_birthday');
 
             $table->text('diagnostic_hypothesis');

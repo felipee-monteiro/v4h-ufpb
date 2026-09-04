@@ -5,18 +5,16 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\RoleName;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Service extends Model
 {
-    use HasUuids;
-    public $incrementing  = false;
-    protected $fillable   = ['title', 'professional_uuid'];
-    protected $primaryKey = 'uuid';
-    protected $keyType    = 'string';
+    use HasUuid;
+
+    protected $fillable = ['title', 'professional_uuid'];
 
     public function professional(): BelongsTo
     {

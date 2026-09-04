@@ -8,11 +8,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class IndexTeleconsultoriaRequest extends FormRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     public function rules(): array
     {
         return [
@@ -27,5 +22,15 @@ final class IndexTeleconsultoriaRequest extends FormRequest
     public function search(): ?string
     {
         return $this->input('search');
+    }
+
+    public function from()
+    {
+        return $this->input('date_from');
+    }
+
+    public function to()
+    {
+        return $this->input('date_to');
     }
 }

@@ -12,9 +12,8 @@ trait UsesCurrentUser
     private $currentUser;
 
     public function __construct(
-        #[CurrentUser()] User $user
-    )
-    {
+        #[CurrentUser] User $user
+    ) {
         $this->currentUser = $user;
     }
 }

@@ -64,18 +64,6 @@ const { hasPermission } = usePermission();
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="patient_initials">Iniciais</Label>
-                        <input
-                            id="patient_initials"
-                            name="patient_initials"
-                            type="text"
-                            maxlength="8"
-                            class="dark:border-border-dark h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground transition outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                        />
-                        <InputError :message="errors.patient_initials" />
-                    </div>
-
-                    <div class="grid gap-2">
                         <Label for="patient_birthday">Data de nascimento</Label>
                         <input
                             id="patient_birthday"

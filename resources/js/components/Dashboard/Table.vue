@@ -72,7 +72,7 @@ const { openDetalhesTeleconsultoriaModal: openDetailsModal } =
                                 <span
                                     class="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-xs font-semibold text-foreground"
                                 >
-                                    {{ teleconsultoria.initials }}
+                                    {{ teleconsultoria.patient_initials }}
                                 </span>
                                 <span class="font-medium text-foreground">{{
                                     teleconsultoria.patient

@@ -4,28 +4,38 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Builders\TeleconsultoriaBuilder;
 use App\Enums\RoleName;
 use App\Enums\TeleconsultoriaStatus;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
+/**
+ * @mixin TeleconsultoriaBuilder
+ *
+ * @method static TeleconsultoriaBuilder query()
+ */
 final class Teleconsultoria extends Model
 {
-    use HasUuids;
-    public $incrementing  = false;
-    protected $primaryKey = 'uuid';
-    protected $keyType    = 'string';
-    protected $fillable   = [
+    use HasUuid;
+
+    protected $fillable = [
         'solicitante_uuid',
         'service_uuid',
         'patient_name',
-        'patient_initials',
         'patient_birthday',
         'diagnostic_hypothesis',
         'clinical_history',
         'professional_opinion',
         'status',
     ];
+
+    protected $attributes = [
+        'status' => TeleconsultoriaStatus::PENDENTE,
+    ];
+
+    protected $appends = ['patient_initials'];
 
     public function solicitante()
     {
@@ -39,27 +49,21 @@ final class Teleconsultoria extends Model
 
     public function canBeReviewedBy(User $user): bool
     {
-        if (!$user->hasRole(RoleName::ESPECIALISTA->value)) {
+        if (! $user->hasRole(RoleName::ESPECIALISTA->value)) {
             return false;
         }
 
         return $user->getKey() === $this->service?->professional_uuid;
     }
 
-    public function registerProfessionalOpinion(string $professionalOpinion): void
+    public function getPatientInitialsAttribute(): string
     {
-        $this->professional_opinion = $professionalOpinion;
-        $this->save();
+        return Str::initials($this->patient_name, capitalize: true);
     }
 
-    #[\Override()]
-    protected static function boot(): void
+    public function newEloquentBuilder($query): TeleconsultoriaBuilder
     {
-        parent::boot();
-
-        self::creating(static function (Teleconsultoria $teleconsultoria): void {
-            $teleconsultoria->status = TeleconsultoriaStatus::PENDENTE->value;
-        });
+        return new TeleconsultoriaBuilder($query);
     }
 
     /**

@@ -6,17 +6,12 @@ services:
           USER_ID: ${UID:-1000}
           GROUP_ID: ${GID:-1000}
           PHP_VERSION: ${PHP_VERSION:-8.5}
-    container_name: v4h-felipe-monteiro-php
+    container_name: php
     ports:
       - 3030:8080
       - 5173:5173
-    dns:
-      - 1.1.1.1
-      - 1.0.0.1
-      - 8.8.8.8
     volumes:
-      - ./:/var/www/html
-      - ./sites-available/:/etc/nginx/conf.d
+      - .:/var/www/html
     environment:
       PHP_UPLOAD_MAX_FILE_SIZE: "500M"
       PHP_OPCACHE_ENABLE: "1"
@@ -25,7 +20,7 @@ services:
     networks:
       - postgres_network
   postgres:
-    image: postgres:18-trixie
+    image: postgres:18-alpine
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USERNAME}
@@ -37,7 +32,6 @@ services:
       - postgres_network
 volumes:
   postgres_data:
-  pgadmin_data:
 networks:
   postgres_network:
     driver: bridge

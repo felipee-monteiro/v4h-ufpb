@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasUuid;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -19,19 +19,18 @@ final class User extends Authenticatable
      */
     use HasFactory;
 
-    use Notifiable;
-    use HasUuids;
     use HasRoles;
-    public $primaryKey    = 'uuid';
-    public $incrementing  = false;
-    public $appends       = ['created_at_formatted'];
-    public $keyType       = 'string';
-    protected $guard_name = 'web';
-    protected $fillable   = [
+    use HasUuid;
+    use Notifiable;
+
+    public $appends = ['created_at_formatted'];
+
+    protected $fillable = [
         'name',
         'email',
         'password',
     ];
+
     protected $hidden = [
         'password',
         'two_factor_secret',
@@ -41,10 +40,8 @@ final class User extends Authenticatable
 
     public function scopeSearch(Builder $query, string $search): Builder
     {
-        return $query->when(\mb_trim($search), static function (Builder $query) use ($search): void {
-            $query->where('name', 'ilike', "%{$search}%")
-                ->orWhere('email', 'ilike', "%{$search}%");
-        });
+        return $query->when(\mb_trim($search), fn (Builder $query) => $query->where('name', 'ilike', "%{$search}%")
+            ->orWhere('email', 'ilike', "%{$search}%"));
     }
 
     public function scopeNewest(Builder $query): Builder

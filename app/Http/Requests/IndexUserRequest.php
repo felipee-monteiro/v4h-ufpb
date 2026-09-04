@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -7,14 +9,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class IndexUserRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -29,6 +23,6 @@ final class IndexUserRequest extends FormRequest
 
     public function search(): string
     {
-        return $this->input('search') ?: '';
+        return $this->input('search', '');
     }
 }
