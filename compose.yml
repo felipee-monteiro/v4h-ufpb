@@ -22,6 +22,7 @@ services:
   postgres:
     image: postgres:18-alpine
     restart: unless-stopped
+    container_name: postgres
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}

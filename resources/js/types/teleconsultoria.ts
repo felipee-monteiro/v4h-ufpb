@@ -1,13 +1,13 @@
 export type TeleconsultoriaStatus =
     | 'Pendente'
-    | 'Em andamento'
+    | 'Em Andamento'
     | 'Concluída'
     | 'Cancelada';
 
 export type Teleconsultoria = {
     id: string;
     patient: string;
-    initials: string;
+    patient_initials: string;
     specialty: string;
     date: string;
     status: TeleconsultoriaStatus;

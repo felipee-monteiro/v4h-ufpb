@@ -23,6 +23,7 @@
         "ergebnis/php-cs-fixer-config": "^6.62",
         "fakerphp/faker": "^1.24",
         "friendsofphp/php-cs-fixer": "^3.95",
+        "fruitcake/laravel-debugbar": "^4.4",
         "laravel/boost": "^2.4",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
-import { onMounted, provide } from 'vue';
 import DashboardFilters from '@/components/Dashboard/Filters.vue';
 import DetalhesTeleconsultoriaModal from '@/components/Dashboard/Modals/DetalhesTeleconsultoriaModal.vue';
 import NovaTeleconsultoria from '@/components/Dashboard/Modals/NovaTeleconsultoria.vue';
@@ -8,6 +6,8 @@ import DashboardTable from '@/components/Dashboard/Table.vue';
 import { useTeleconsultoriaFilters } from '@/composables/useTeleconsultoriaFilters';
 import { SpecialitiesProvideKey } from '@/Keys';
 import dashboard from '@/routes/dashboard';
+import { Head } from '@inertiajs/vue3';
+import { onMounted, provide } from 'vue';
 
 import type { Teleconsultoria } from '@/types';
 
@@ -24,19 +24,21 @@ defineOptions({
 
 const props = withDefaults(
     defineProps<{
-        teleconsultorias: Teleconsultoria[];
+        teleconsultorias: {data: Teleconsultoria[]};
         specialities: [];
     }>(),
     {
-        teleconsultorias: () => [],
+        teleconsultorias: () => ({
+            data: []
+        }),
         specialities: () => [],
     },
 );
 
-const { setTeleconsultorias } = useTeleconsultoriaFilters();
+const { setTeleconsultorias, filteredTeleconsultorias } = useTeleconsultoriaFilters();
 
 onMounted(() => {
-    setTeleconsultorias(props.teleconsultorias);
+    setTeleconsultorias(props.teleconsultorias.data);
 });
 
 provide(SpecialitiesProvideKey, props.specialities);
@@ -74,6 +76,6 @@ provide(SpecialitiesProvideKey, props.specialities);
 
         <DashboardFilters />
         <DetalhesTeleconsultoriaModal />
-        <DashboardTable />
+        <DashboardTable :teleconsultorias="props.teleconsultorias" />
     </div>
 </template>

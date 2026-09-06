@@ -31,11 +31,11 @@ final class Teleconsultoria extends Model
         'status',
     ];
 
+    protected $table = 'teleconsultorias';
+
     protected $attributes = [
         'status' => TeleconsultoriaStatus::PENDENTE,
     ];
-
-    protected $appends = ['patient_initials'];
 
     public function solicitante()
     {
@@ -53,7 +53,7 @@ final class Teleconsultoria extends Model
             return false;
         }
 
-        return $user->getKey() === $this->service?->professional_uuid;
+        return $user->is($this->service->professional);
     }
 
     public function getPatientInitialsAttribute(): string

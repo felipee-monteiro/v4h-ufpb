@@ -1,5 +1,5 @@
-import { reactive, toRefs, computed } from 'vue';
 import type { Teleconsultoria, TeleconsultoriaFilters, TeleconsultoriaStatus } from '@/types';
+import { computed, reactive, toRefs } from 'vue';
 
 const state = reactive<TeleconsultoriaFilters>({
     search: '',
@@ -11,7 +11,7 @@ const state = reactive<TeleconsultoriaFilters>({
 
 const statusOptions: TeleconsultoriaStatus[] = [
     'Pendente',
-    'Em andamento',
+    'Em Andamento',
     'Concluída',
     'Cancelada',
 ];

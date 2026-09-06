@@ -23,8 +23,6 @@ final class User extends Authenticatable
     use HasUuid;
     use Notifiable;
 
-    public $appends = ['created_at_formatted'];
-
     protected $fillable = [
         'name',
         'email',
@@ -47,11 +45,6 @@ final class User extends Authenticatable
     public function scopeNewest(Builder $query): Builder
     {
         return $query->orderByDesc('created_at');
-    }
-
-    public function getCreatedAtFormattedAttribute(): string
-    {
-        return $this->created_at->format('F j, Y');
     }
 
     public function teleconsultorias()
